@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const http = require("http");
 const { Server } = require("socket.io");
 const connectDB = require("./db");
+const deviceRoutes = require("./routes/deviceRoutes");
 
 // Load environment variables
 dotenv.config();
@@ -24,6 +25,7 @@ const io = new Server(server, {
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use("/api/devices", deviceRoutes);
 
 // Home route
 app.get("/", (req, res) => {
