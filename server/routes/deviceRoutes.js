@@ -64,6 +64,44 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Update device status
+router.patch("/:deviceId/status", async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    if (!["online", "offline"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Status must be online or offline",
+      });
+    }
+
+    const updatedDevice = await Device.findOneAndUpdate(
+      { deviceId: req.params.deviceId },
+      { status },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedDevice) {
+      return res.status(404).json({
+        success: false,
+        message: "Device not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Device status updated successfully",
+      device: updatedDevice,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
 // Get device by deviceId
 router.get("/:deviceId", async (req, res) => {
   try {
